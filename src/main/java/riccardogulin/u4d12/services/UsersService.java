@@ -3,6 +3,7 @@ package riccardogulin.u4d12.services;
 import org.springframework.stereotype.Service;
 import riccardogulin.u4d12.entities.User;
 import riccardogulin.u4d12.exceptions.NotFoundException;
+import riccardogulin.u4d12.exceptions.ValidationException;
 import riccardogulin.u4d12.payloads.NewUserDTO;
 import riccardogulin.u4d12.repositories.UsersRepository;
 
@@ -21,7 +22,10 @@ public class UsersService {
 	}
 
 	public User create(NewUserDTO payload) {
-		// 1. Validazione, controlli vari
+		// 1. Validazione, controlli vari (email già esistente)
+		if (this.usersRepository.findByEmail(payload.email()).isPresent())
+			throw new ValidationException("L'email " + payload.email() + " è già in uso");
+
 		// 2. Save dello user
 		User newUser = new User(payload.name(), payload.surname(), payload.email(), payload.password(), payload.dateOfBirth());
 		return this.usersRepository.save(newUser);
