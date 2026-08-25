@@ -11,6 +11,12 @@ import java.time.LocalDateTime;
 @RestControllerAdvice // <-- Indica che questa classe sarà responsabile di catturare tutte le eccezioni dell'applicazione
 public class ErrorHandlers {
 
+	@ExceptionHandler(ValidationException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST) // 400
+	public ErrorsDTO handleValidationEx(ValidationException ex) {
+		return new ErrorsDTO(ex.getMessage(), LocalDateTime.now());
+	}
+
 	@ExceptionHandler(NotFoundException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND) // 404
 	public ErrorsDTO handleNotFoundEx(NotFoundException ex) {

@@ -1,13 +1,17 @@
 package riccardogulin.u4d12.controllers;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import riccardogulin.u4d12.entities.Video;
+import riccardogulin.u4d12.exceptions.ValidationException;
 import riccardogulin.u4d12.payloads.NewVideoDTO;
 import riccardogulin.u4d12.payloads.UpdateVideoDTO;
 import riccardogulin.u4d12.services.VideosService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /*
 
@@ -31,7 +35,23 @@ public class VideosController {
 	// 1. POST http://localhost:3001/api/videos (+req.body), risponde 201 e il video creato
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED) // 201
-	public Video create(@RequestBody NewVideoDTO payload) {
+	public Video create(@RequestBody @Validated NewVideoDTO payload, BindingResult validationResult) { // Senza @Validated la validazione non viene azionata
+		// BindingResult validationResult contiene l'elenco degli errori di validazione
+		if (validationResult.hasErrors()) {
+
+
+			// validationResult.getFieldErrors mi restituisce una List di oggetti errore
+			String errorsList = validationResult.getFieldErrors()
+					.stream()
+					.map(fieldError -> fieldError.getDefaultMessage())// Ogni oggetto errore contiene al suo interno (tra le varie cose) anche
+					// e soprattutto il messaggio di errore
+					.collect(Collectors.joining(". ")); // <- A partire dalla lista di messaggi di errore, ottengo un unica stringa
+			// di errori collegati da ". "
+
+			throw new ValidationException(errorsList); // Passo questa stringa all'eccezione in maniera tale che
+			// arrivi all'error handler 400 che si occuperà di inviarla come messaggio nel payload
+		}
+
 		return this.videosService.create(payload);
 	}
 
