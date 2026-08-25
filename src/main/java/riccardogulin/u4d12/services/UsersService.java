@@ -3,6 +3,7 @@ package riccardogulin.u4d12.services;
 import org.springframework.stereotype.Service;
 import riccardogulin.u4d12.entities.User;
 import riccardogulin.u4d12.exceptions.NotFoundException;
+import riccardogulin.u4d12.payloads.NewUserDTO;
 import riccardogulin.u4d12.repositories.UsersRepository;
 
 import java.util.List;
@@ -19,10 +20,11 @@ public class UsersService {
 		return this.usersRepository.findAll();
 	}
 
-	public User create(User payload) {
+	public User create(NewUserDTO payload) {
 		// 1. Validazione, controlli vari
 		// 2. Save dello user
-		return this.usersRepository.save(payload);
+		User newUser = new User(payload.name(), payload.surname(), payload.email(), payload.password(), payload.dateOfBirth());
+		return this.usersRepository.save(newUser);
 	}
 
 	public User findById(long userId) {

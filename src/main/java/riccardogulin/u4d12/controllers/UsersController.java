@@ -3,6 +3,7 @@ package riccardogulin.u4d12.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import riccardogulin.u4d12.entities.User;
+import riccardogulin.u4d12.payloads.NewUserDTO;
 import riccardogulin.u4d12.services.UsersService;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public class UsersController {
 	// 2. POST http://localhost:3001/api/users (+request.body), risponde 201 CREATED (nel payload l'utente creato)
 	@ResponseStatus(HttpStatus.CREATED) // 201
 	@PostMapping
-	public User createUser(@RequestBody User payload) {
+	public User createUser(@RequestBody NewUserDTO payload) {
 		return this.usersService.create(payload);
 	}
 
